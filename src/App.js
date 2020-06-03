@@ -26,7 +26,7 @@ class App extends Component {
         this.setState({
           user: user
         });
-        this.flashAlert('Logged in!', <Redirect to="/" push />);
+        this.flashAlert({title: 'Logged in!', message: <Redirect to="/" push />});
       } else {
         this.setState({
           user: null
@@ -50,7 +50,7 @@ class App extends Component {
   handleSignOut = () => {
     if (this.state.user) {
       firebase.auth().signOut()
-        .then(() => this.flashAlert('Logged out!', type='info'))
+        .then(() => this.flashAlert({title: 'Logged out!', type: 'info'}))
         .catch(this.handleError);
     }
   }
@@ -89,7 +89,7 @@ class App extends Component {
     });
   }
 
-  flashAlert(title, message='', type='success', delay=3000) {
+  flashAlert({title, message='', type='success', delay=3000}) {
     this.setState({
       alert: {
         title: title,
