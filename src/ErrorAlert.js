@@ -4,15 +4,10 @@ import Alert from 'react-bootstrap/Alert';
 class ErrorAlert extends Component {
   render() {
     return (
-      <>
-        {
-          this.props.errorMessage != null &&
-          <Alert variant="danger">
-            <Alert.Heading>Error!</Alert.Heading>
-            <p>{this.props.errorMessage}</p>
-          </Alert>
-        }
-      </>
+      <Alert variant="danger" show={this.props.errorMessage != null}>
+        <Alert.Heading>Error!</Alert.Heading>
+        <p>{this.props.errorMessage}</p>
+      </Alert>
     );
   }
 }
