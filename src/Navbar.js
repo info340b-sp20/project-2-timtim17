@@ -8,10 +8,29 @@ class OurNavbar extends Component {
     return (
       <Navbar bg="dark" variant="dark">
         <Navbar.Brand as={Link} to="/">App thing</Navbar.Brand>
-        <Nav>
-          <Nav.Link as={Link} to="/">Home</Nav.Link>
-          <Nav.Link as={Link} to="/about">About</Nav.Link>
-        </Nav>
+        <Navbar.Toggle aria-controls="navbar-nav" />
+        <Navbar.Collapse id="navbar-nav">
+          <Nav className="mr-auto">
+            <Nav.Link as={Link} to="/">Home</Nav.Link>
+            <Nav.Link as={Link} to="/about">About</Nav.Link>
+          </Nav>
+          {
+            this.props.user &&
+            <Navbar.Text>
+              Signed in as: {this.props.user.email}
+            </Navbar.Text>
+          }
+          <Nav>
+            {
+              this.props.user ?
+              <Nav.Link onClick={this.props.handleSignOut}>Log Out</Nav.Link>
+              : <>
+                  <Nav.Link onClick={this.props.handleSignIn}>Log In</Nav.Link>
+                  <Nav.Link onClick={this.props.handleSignUp}>Sign Up</Nav.Link>
+                </>
+            }
+          </Nav>
+        </Navbar.Collapse>
       </Navbar>
     );
   }
