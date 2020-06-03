@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import firebase from 'firebase/app';
+// import firebase from 'firebase/app';
 import NewIdeaForm from './NewIdeaForm';
 import IdeaGroup from './IdeaGroup';
 import {moviesDBKey} from './Config';

@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import firebase from 'firebase/app';
+// import firebase from 'firebase/app';
 import Card from 'react-bootstrap/Card';
 import Button from 'react-bootstrap/Button';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
