@@ -23,13 +23,13 @@ class IdeaCard extends Component {
         <Card.Body>
           <Card.Title>{this.props.idea.title}</Card.Title>
           { this.props.user ? <>
-                                <Card.Link as={Button} variant="link">Upvote (1)</Card.Link>
+                                <Card.Link as={Button} variant="link">Upvote ({this.props.idea.votes})</Card.Link>
                                 { this.props.idea.createdBy === this.props.user.uid &&
                                   <Card.Link className="float-sm-right" as={Button} variant="link" onClick={() => this.props.handleRemove(this.props.id)}>
                                     <FontAwesomeIcon icon={faTrashAlt} /> Delete
                                   </Card.Link> }
                               </>
-                            : <Card.Text>1 Upvote</Card.Text> }
+                            : <Card.Text>{this.props.idea.votes} Upvote</Card.Text> }
         </Card.Body>
       </Card>
     );
