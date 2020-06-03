@@ -20,6 +20,11 @@ class AuthModal extends Component {
     event.preventDefault();
     this.props.onSubmit(this.state.email, this.state.password)
       .then(this.props.onHide)
+      .then(() => this.setState({
+        email: '',
+        password: '',
+        errorMessage: null
+      }))
       .catch(err => this.setState({errorMessage: err.message}));
   }
 
