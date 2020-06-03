@@ -7,14 +7,14 @@ import Navbar from './Navbar';
 import AuthModal from './AuthModal';
 import firebase from 'firebase/app';
 import 'firebase/auth';
-import ErrorAlert from './ErrorAlert';
+import AlertBar from './AlertBar';
 
 class App extends Component {
   constructor(props) {
     super(props);
     this.state = {
       user: null,
-      errorMessage: null,
+      alert: {},
       showSignUpModal: false,
       showSignInModal: false
     };
@@ -22,10 +22,16 @@ class App extends Component {
 
   componentDidMount() {
     firebase.auth().onAuthStateChanged(user => {
-      this.setState({
-        user: user ? user : null,
-        errorMessage: null
-      });
+      if (user) {
+        this.setState({
+          user: user
+        });
+        this.flashAlert('Logged in!', <Redirect to="/" push />);
+      } else {
+        this.setState({
+          user: null
+        });
+      }
     });
   }
 
@@ -44,6 +50,7 @@ class App extends Component {
   handleSignOut = () => {
     if (this.state.user) {
       firebase.auth().signOut()
+        .then(() => this.flashAlert('Logged out!', type='info'))
         .catch(this.handleError);
     }
   }
@@ -74,24 +81,40 @@ class App extends Component {
 
   handleError = error => {
     this.setState({
-      errorMessage: error.message
+      alert: {
+        title: 'Error!',
+        message: error.message,
+        type: 'danger'
+      }
     });
+  }
+
+  flashAlert(title, message='', type='success', delay=3000) {
+    this.setState({
+      alert: {
+        title: title,
+        message: message,
+        type: type
+      }
+    });
+    setTimeout(() => this.setState({alert: {}}), delay);
   }
 
   render() {
     return (
       <Router>
         <Navbar user={this.state.user} handleSignOut={this.handleSignOut} handleSignUp={this.showSignUpModal} handleSignIn={this.showSignInModal} />
-        <ErrorAlert errorMessage={this.state.errorMessage} />
+        <AlertBar alert={this.state.alert} />
         <Container>
           <Switch>
             <Route exact path="/">
               <ListPage />
+              {this.state.user === null && <Redirect to="/about" />}
             </Route>
             <Route path="/about">
               <AboutPage />
             </Route>
-            <Redirect to="/"></Redirect>
+            <Redirect to="/" />
           </Switch>
         </Container>
         <AuthModal onSubmit={this.handleSignUp} show={this.state.showSignUpModal} onHide={this.hideSignUpModal} title="Sign up!" buttonText="Sign up" />

@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 import Modal from 'react-bootstrap/Modal';
-import ErrorAlert from './ErrorAlert';
+import AlertBar from './AlertBar';
 
 class AuthModal extends Component {
   constructor(props) {
@@ -8,7 +8,7 @@ class AuthModal extends Component {
     this.state = {
       email: '',
       password: '',
-      errorMessage: null
+      alert: {}
     };
   }
 
@@ -23,9 +23,9 @@ class AuthModal extends Component {
       .then(() => this.setState({
         email: '',
         password: '',
-        errorMessage: null
+        alert: {}
       }))
-      .catch(err => this.setState({errorMessage: err.message}));
+      .catch(err => this.setState({alert: {type: 'danger', title: 'Error!', message: err.message}}));
   }
 
   render() {
@@ -35,7 +35,7 @@ class AuthModal extends Component {
           <Modal.Title>{this.props.title}</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          <ErrorAlert errorMessage={this.state.errorMessage} />
+          <AlertBar alert={this.state.alert} />
           <form onSubmit={this.handleSubmit}>
             <label>
               Email:
