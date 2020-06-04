@@ -21,6 +21,7 @@ class App extends Component {
       showSignInModal: false,
       authReady: false
     };
+    this.stopUnflashAlert = null;
   } 
 
   componentDidMount() {
@@ -95,6 +96,10 @@ class App extends Component {
         type: 'danger'
       }
     });
+    if (this.stopUnflashAlert) {
+      this.stopUnflashAlert();
+      this.stopUnflashAlert = null;
+    }
   }
 
   flashAlert({title, message='', type='success', delay=3000}) {
@@ -105,10 +110,20 @@ class App extends Component {
         type: type
       }
     });
-    setTimeout(() => this.setState({alert: {}}), delay);
+    const timerId = setTimeout(() => {
+      this.clearAlert();
+      this.stopUnflashAlert = null;
+    }, delay);
+    this.stopUnflashAlert = () => clearTimeout(timerId);
   }
 
+  clearAlert = () => {
+    this.setState({alert: {}});
+  };
+
   render() {
+    const renderListDetailsPage = routeParams => <ListDetailsPage {...routeParams} user={this.state.user} handleError={this.handleError} clearAlert={this.clearAlert} />;
+    const renderGroupsPage = routeParams => <ListPage {...routeParams} authReady={this.state.authReady} user={this.state.user} />;
     return (
       <Router>
         <Navbar user={this.state.user} handleSignOut={this.handleSignOut}
@@ -116,16 +131,9 @@ class App extends Component {
         <AlertBar alert={this.state.alert} />
         <Container className="mt-3 mb-3">
           <Switch>
-            <Route exact path="/">
-              <ListPage />
-              {this.state.authReady && this.state.user === null && <Redirect to="/about" />}
-            </Route>
-            <Route path="/about">
-              <AboutPage />
-            </Route>
-            <Route path="/group/:groupid">
-              <ListDetailsPage user={this.state.user} handleError={this.handleError} />
-            </Route>
+            <Route exact path="/" render={renderGroupsPage} />
+            <Route path="/about" component={AboutPage} />
+            <Route path="/group/:groupid" render={renderListDetailsPage} />
             <Redirect to="/" />
           </Switch>
         </Container>

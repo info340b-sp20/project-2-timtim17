@@ -1,19 +1,17 @@
 import React, {Component} from 'react';
-// import firebase from 'firebase/app';
+import firebase from 'firebase/app';
+import 'firebase/firestore';
 import Card from 'react-bootstrap/Card';
 import Button from 'react-bootstrap/Button';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {faTrashAlt} from '@fortawesome/free-solid-svg-icons';
 
 class IdeaCard extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-    };
-  }
-
-  componentDidMount() {
-
+  upvote = () => {
+    firebase.firestore().collection('groups').doc(this.props.gid)
+      .collection('ideas').doc(this.props.idea.id).set({
+        upvotedBy: [...this.props.idea.upvotedBy, this.props.user.uid]
+      }, {merge: true});
   }
 
   render() {
@@ -23,13 +21,14 @@ class IdeaCard extends Component {
         <Card.Body>
           <Card.Title>{this.props.idea.title}</Card.Title>
           { this.props.user ? <>
-                                <Card.Link as={Button} variant="link">Upvote ({this.props.idea.votes})</Card.Link>
-                                { this.props.idea.createdBy === this.props.user.uid &&
-                                  <Card.Link className="float-sm-right" as={Button} variant="link" onClick={() => this.props.handleRemove(this.props.id)}>
+                                { this.props.idea.upvotedBy.includes(this.props.user.uid) ? <Card.Link>Upvoted! ({this.props.idea.upvotedBy.length})</Card.Link>
+                                                                                          : <Card.Link as={Button} variant="link" onClick={this.upvote}>Upvote ({this.props.idea.upvotedBy.length})</Card.Link> }
+                                { (this.props.idea.createdBy === this.props.user.uid || this.props.adminUID === this.props.user.uid) &&
+                                  <Card.Link className="float-sm-right" as={Button} variant="link" onClick={() => this.props.handleRemove(this.props.idea.id)}>
                                     <FontAwesomeIcon icon={faTrashAlt} /> Delete
                                   </Card.Link> }
                               </>
-                            : <Card.Text>{this.props.idea.votes} Upvote</Card.Text> }
+                            : <Card.Text>{this.props.idea.upvotedBy.length} Upvote{this.props.idea.upvotedBy.length !== 1 && 's'}</Card.Text> }
         </Card.Body>
       </Card>
     );

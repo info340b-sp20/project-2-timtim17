@@ -32,6 +32,7 @@ class NewIdeaForm extends Component {
     });
     this.props.handleAdd(this.state.suggestTitle)
       .then(() => this.setState({ suggestTitle: '' }))
+      .then(this.props.clearAlert)
       .catch(this.props.handleError)
       .finally(() => this.setState({ showSpinner: false }));
   }

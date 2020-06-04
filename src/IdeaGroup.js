@@ -4,7 +4,7 @@ import IdeaCard from './IdeaCard';
 
 class IdeaGroup extends Component {
   render() {
-    const ideaCards = this.props.ideas.map((idea, idx) => <IdeaCard key={idx} id={idx} idea={idea} user={this.props.user} handleRemove={this.props.handleRemove} />);
+    const ideaCards = this.props.ideas.map(idea => <IdeaCard key={idea.id} idea={idea} user={this.props.user} handleRemove={this.props.handleRemove} adminUID={this.props.adminUID} gid={this.props.groupId} />);
     return (
       <>
         <h2>{this.props.title}</h2>
