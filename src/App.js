@@ -6,7 +6,6 @@ import AboutPage from './AboutPage';
 import Navbar from './Navbar';
 import AuthModal from './AuthModal';
 import firebase from 'firebase/app';
-import 'firebase/auth';
 import AlertBar from './AlertBar';
 import ListDetailsPage from './ListDetailsPage';
 import Footer from './Footer';
@@ -25,7 +24,7 @@ class App extends Component {
   } 
 
   componentDidMount() {
-    firebase.auth().onAuthStateChanged(user => {
+    this.authUnsubscribe = firebase.auth().onAuthStateChanged(user => {
       if (user) {
         this.setState({
           user: user
@@ -42,6 +41,10 @@ class App extends Component {
         });
       }
     });
+  }
+
+  componentWillUnmount() {
+    this.authUnsubscribe();
   }
 
   /**
