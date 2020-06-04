@@ -40,13 +40,13 @@ class NewIdeaForm extends Component {
   render() {
     return (
       <section id="suggest-idea-form">
-        <h2 className="mb-2">Suggest an Idea!</h2>
+        <h2 className="mb-2" id="newidea-head">Suggest an Idea!</h2>
         {
           this.props.user ?
           <Form onSubmit={this.handleSuggestSubmit}>
             <Form.Group as={Row}>
               <Col sm={4}>
-                <Form.Control type="text" placeholder="Suggest a title!" onChange={this.onSuggestChange} value={this.state.suggestTitle} required />
+                <Form.Control type="text" placeholder="Suggest a title!" onChange={this.onSuggestChange} value={this.state.suggestTitle} required aria-labelledby="newidea-head" />
               </Col>
               <Col sm={2}>
                 <Button variant="primary" type="submit">Suggest!</Button>

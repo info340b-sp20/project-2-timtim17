@@ -27,6 +27,18 @@ footer a {
   border: 0;
 }
 
+a, .btn-link {
+  color: #0051a9;
+}
+
+.btn-primary {
+  background-color: #1e67b5;
+}
+
+.btn-primary:hover {
+  background-color: #2c547d;
+}
+
 #root {
   min-height: 100vh;
   display: flex;
