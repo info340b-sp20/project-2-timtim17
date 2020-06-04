@@ -8,6 +8,8 @@ import AuthModal from './AuthModal';
 import firebase from 'firebase/app';
 import 'firebase/auth';
 import AlertBar from './AlertBar';
+import ListDetailsPage from './ListDetailsPage';
+import Footer from './Footer';
 
 class App extends Component {
   constructor(props) {
@@ -16,8 +18,10 @@ class App extends Component {
       user: null,
       alert: {},
       showSignUpModal: false,
-      showSignInModal: false
+      showSignInModal: false,
+      authReady: false
     };
+    this.stopUnflashAlert = null;
   } 
 
   componentDidMount() {
@@ -26,10 +30,15 @@ class App extends Component {
         this.setState({
           user: user
         });
-        this.flashAlert({title: 'Logged in!', message: <Redirect to="/" push />});
+        this.flashAlert({title: 'Logged in!'});
       } else {
         this.setState({
           user: null
+        });
+      }
+      if (!this.state.authReady) {
+        this.setState({
+          authReady: true
         });
       }
     });
@@ -87,6 +96,10 @@ class App extends Component {
         type: 'danger'
       }
     });
+    if (this.stopUnflashAlert) {
+      this.stopUnflashAlert();
+      this.stopUnflashAlert = null;
+    }
   }
 
   flashAlert({title, message='', type='success', delay=3000}) {
@@ -97,26 +110,34 @@ class App extends Component {
         type: type
       }
     });
-    setTimeout(() => this.setState({alert: {}}), delay);
+    const timerId = setTimeout(() => {
+      this.clearAlert();
+      this.stopUnflashAlert = null;
+    }, delay);
+    this.stopUnflashAlert = () => clearTimeout(timerId);
   }
 
+  clearAlert = () => {
+    this.setState({alert: {}});
+  };
+
   render() {
+    const renderListDetailsPage = routeParams => <ListDetailsPage {...routeParams} user={this.state.user} handleError={this.handleError} clearAlert={this.clearAlert} />;
+    const renderGroupsPage = routeParams => <ListPage {...routeParams} authReady={this.state.authReady} user={this.state.user} />;
     return (
       <Router>
-        <Navbar user={this.state.user} handleSignOut={this.handleSignOut} handleSignUp={this.showSignUpModal} handleSignIn={this.showSignInModal} />
+        <Navbar user={this.state.user} handleSignOut={this.handleSignOut}
+          handleSignUp={this.showSignUpModal} handleSignIn={this.showSignInModal} authReady={this.state.authReady} />
         <AlertBar alert={this.state.alert} />
-        <Container>
+        <Container className="mt-3 mb-3">
           <Switch>
-            <Route exact path="/">
-              <ListPage />
-              {this.state.user === null && <Redirect to="/about" />}
-            </Route>
-            <Route path="/about">
-              <AboutPage />
-            </Route>
+            <Route exact path="/" render={renderGroupsPage} />
+            <Route path="/about" component={AboutPage} />
+            <Route path="/group/:groupid" render={renderListDetailsPage} />
             <Redirect to="/" />
           </Switch>
         </Container>
+        <Footer />
         <AuthModal onSubmit={this.handleSignUp} show={this.state.showSignUpModal} onHide={this.hideSignUpModal} title="Sign up!" buttonText="Sign up" />
         <AuthModal onSubmit={this.handleSignIn} show={this.state.showSignInModal} onHide={this.hideSignInModal} title="Login!" buttonText="Login" />
       </Router>

@@ -2,12 +2,15 @@ import React, {Component} from 'react';
 import Navbar from 'react-bootstrap/Navbar';
 import Nav from 'react-bootstrap/Nav';
 import {Link} from 'react-router-dom';
+import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
+import {faSignOutAlt, faSpinner} from '@fortawesome/free-solid-svg-icons';
 
 class OurNavbar extends Component {
   render() {
     return (
       <Navbar bg="dark" variant="dark">
         <Navbar.Brand as={Link} to="/">App thing</Navbar.Brand>
+        { !this.props.authReady && <Navbar.Text><FontAwesomeIcon icon={faSpinner} pulse /></Navbar.Text> }
         <Navbar.Toggle aria-controls="navbar-nav" />
         <Navbar.Collapse id="navbar-nav">
           <Nav className="mr-auto">
@@ -21,14 +24,14 @@ class OurNavbar extends Component {
           </Nav>
           {
             this.props.user &&
-            <Navbar.Text>
+            <Navbar.Text className="mr-2">
               Signed in as: {this.props.user.email}
             </Navbar.Text>
           }
           <Nav>
             {
               this.props.user ?
-              <Nav.Link onClick={this.props.handleSignOut}>Log Out</Nav.Link>
+              <Nav.Link onClick={this.props.handleSignOut}><FontAwesomeIcon icon={faSignOutAlt} /> Log Out</Nav.Link>
               : <>
                   <Nav.Link onClick={this.props.handleSignIn}>Log In</Nav.Link>
                   <Nav.Link onClick={this.props.handleSignUp}>Sign Up</Nav.Link>
