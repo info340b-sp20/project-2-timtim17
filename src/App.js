@@ -6,7 +6,6 @@ import AboutPage from './AboutPage';
 import Navbar from './Navbar';
 import AuthModal from './AuthModal';
 import firebase from 'firebase/app';
-import 'firebase/auth';
 import AlertBar from './AlertBar';
 import ListDetailsPage from './ListDetailsPage';
 import Footer from './Footer';
