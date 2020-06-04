@@ -31,6 +31,15 @@
     top: 0px;
     right: 0px;
 }
+#flexCol {
+  display: flex;
+  justify-content: center;
+  width: 100px;
+}
+#flexDiv {
+  display: flex;
+  justify-content: flex-start;
+}
 
 #signupPic {
     width:200px; /* you can use % */
