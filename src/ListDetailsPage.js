@@ -6,6 +6,7 @@ import ListDetailsHeader from './ListDetailsHeader';
 import {moviesDBKey} from './Config';
 import {checkStatus} from './util';
 import _ from 'lodash';
+import 'whatwg-fetch'
 
 const MOVIESDB_API = `https://api.themoviedb.org/3/search/multi?api_key=${moviesDBKey}&query={query}&page=1&include_adult=false`;
 const MOVIESDB_IMG_PATH_PREFIX = 'https://image.tmdb.org/t/p/w780/';
