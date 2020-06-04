@@ -1,0 +1,71 @@
+#topCol {
+    background-color:gray;
+    height: 250px;
+    margin-top: 10px;
+    padding: 10px;
+    font-size: larger;
+}
+#text {
+    color: white;
+}
+#bottomLeftCol {
+    background-color:#ff7b00;
+    margin-top: 10px;
+    height: 250px;
+    margin-right: 5px;
+    font-size: larger;
+
+}
+
+#bottomRightCol {
+    background-color:gray;
+    margin-top: 10px;
+    height: 250px;
+    margin-left: 5px;
+    font-size: larger;
+
+}
+
+#catPic, #signupPic {
+    float: right;
+    top: 0px;
+    right: 0px;
+}
+
+#signupPic {
+    width:200px; /* you can use % */
+    height: auto;
+}
+
+#loginHeading {
+    text-align:left;
+    float: left;
+    align-items: flex-start;
+}
+
+#useHeading {
+    text-align: right;
+    float: right;
+    align-items: flex-end;
+
+}
+
+
+#aboutHeading {
+    text-align: center;
+}
+
+@media (max-width: 992px) {
+    #bottomRightCol {
+        margin-left: 0px;
+    }
+    #bottomLeftCol {
+        margin-right: 0px;
+    }
+    #text {
+        font-size: larger;
+    }
+    #catPic, #signupPic {
+        visibility: hidden;
+    }
+}
