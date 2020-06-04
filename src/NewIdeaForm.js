@@ -15,10 +15,6 @@ class NewIdeaForm extends Component {
     };
   }
 
-  componentDidMount() {
-
-  }
-
   onSuggestChange = event => {
     this.setState({
       suggestTitle: event.target.value
