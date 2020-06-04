@@ -35,7 +35,9 @@ class ColButton extends Component {
     return (
       <Col>
           <div style={{ display: 'flex', justifyContent: 'space-between'}}>
+            <div style={{ fontSize: '30px'}}>
               {this.props.groupName}
+            </div>
             <Link to={this.props.groupLink}><Button variant="primary">Open List</Button></Link>
           </div>
       </Col>
