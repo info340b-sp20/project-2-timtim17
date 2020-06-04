@@ -56,7 +56,7 @@ class DesktopRows extends Component {
           <div style={divStyle}>
             <h3 id="loginHeading">How to sign up</h3>
           </div>
-          <img src="signupPicture.png" id = "signupPic" alt="Login form" />
+          <img src="signupPicture.PNG" id = "signupPic" alt="Login form" />
           <div id="text">
             {this.props.content[1]}
           </div>
@@ -65,7 +65,7 @@ class DesktopRows extends Component {
           <div style={divStyle}>
             <h3 id="useHeading">How to use</h3> 
           </div>
-          <img src="suggestionPicture.png" id = "signupPic" alt="Login form" />
+          <img src="suggestionPicture.PNG" id = "signupPic" alt="Login form" />
           <div id="text">
             {this.props.content[2]}
           </div>
