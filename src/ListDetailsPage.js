@@ -83,7 +83,9 @@ class ListDetailsPage extends Component {
       userDBRef.get().then(doc => {
         if (doc.exists && doc.data().groups) {
           const curGroups = doc.data().groups;
-          if (!curGroups || !_.find(curGroups, group => group.id === this.dbRef.id)) {
+          if (!curGroups) {
+            userDBRef.set({groups:[this.dbRef]});
+          } else if(!_.find(curGroups, group => group.id === this.dbRef.id)) {
             userDBRef.set({groups:[...curGroups, this.dbRef]});
           }
         } else {

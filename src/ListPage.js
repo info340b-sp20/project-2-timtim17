@@ -5,14 +5,16 @@ import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import firebase from 'firebase/app';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
-import {faSpinner} from '@fortawesome/free-solid-svg-icons';
+import {faSpinner, faPlus} from '@fortawesome/free-solid-svg-icons';
+import CreateModal from './CreateModal';
 
 class ListPage extends Component {
   constructor(props) {
     super(props);
     this.state = {
       groups: [],
-      isLoading: true
+      isLoading: true,
+      showCreateModal: false
     };
   }
 
@@ -28,28 +30,40 @@ class ListPage extends Component {
     }
   }
 
+  componentWillUnmount() {
+    if (this.unsubscribeDB) {
+      this.unsubscribeDB();
+    }
+  }
+
   updateGroups() {
     this.setState({isLoading: true});
     const handleDBError = error => this.props.handleError(new Error('Error connecting to database: ' + error));
     const dbRef = firebase.firestore().collection('users').doc(this.props.user.uid);
-    dbRef.get()
-      .then(doc => {
-        if (doc.exists) {
-          const promises = doc.data().groups.map(doc => doc.get());
-          Promise.all(promises)
-            .then(data => {
-              const groups = data.map(doc => {
-                const data = doc.data();
-                return {link: '/group/' + doc.id, name: data.name, id: doc.id};
-              });
-              this.setState({groups: groups, isLoading: false});
-            })
-            .catch(handleDBError);
-        } else {
-          dbRef.set({groups: []}).catch(handleDBError);
-        }
-      })
-      .catch(handleDBError);
+    this.unsubscribeDB = dbRef.onSnapshot(doc => {
+      if (doc.exists) {
+        const promises = doc.data().groups.map(doc => doc.get());
+        Promise.all(promises)
+          .then(data => {
+            const groups = data.map(doc => {
+              const data = doc.data();
+              return {link: '/group/' + doc.id, name: data.name, id: doc.id};
+            });
+            this.setState({groups: groups, isLoading: false});
+          })
+          .catch(handleDBError);
+      } else {
+        dbRef.set({groups: []}).catch(handleDBError);
+      }
+    }, handleDBError);
+  }
+
+  showCreateModal = () => {
+    this.setState({showCreateModal: true});
+  }
+
+  hideCreateModal = () => {
+    this.setState({showCreateModal: false});
   }
 
   render() {
@@ -57,9 +71,13 @@ class ListPage extends Component {
     return (
       <>
         {this.props.authReady && this.props.user === null && <Redirect to="/about" />}
-        <h1>My Groups</h1>
+        <header className="d-flex justify-content-between align-items-center">
+          <h1>My Groups</h1>
+          <Button variant="outline-secondary" onClick={this.showCreateModal}><FontAwesomeIcon icon={faPlus} /> Create Group</Button>
+        </header>
         { this.state.isLoading ? <p>Loading... <FontAwesomeIcon icon={faSpinner} pulse /></p>
           : this.state.groups.length === 0 ? <p>No groups found... try gathering some friends and making one?</p> : rows }
+        <CreateModal show={this.state.showCreateModal} handleHide={this.hideCreateModal} uid={this.props.user?.uid} />
       </>
     );
   }
@@ -68,7 +86,7 @@ class ListPage extends Component {
 class RowButton extends Component {
   render() {
     return (
-      <Row>
+      <Row className="mb-1">
         <ColButton groupLink={this.props.groupLink} groupName={this.props.groupName}/>  
       </Row>
     );
@@ -79,11 +97,12 @@ class ColButton extends Component {
   render() {
     return (
       <Col>
-          <div style={{ display: 'flex', justifyContent: 'space-between'}}>
-            <div style={{ fontSize: '30px'}}>
-              {this.props.groupName}
+          <div className="d-flex justify-content-between align-items-center">
+            <div>
+              <p style={{fontSize: '30px', marginBottom: 0}}>{this.props.groupName}</p>
+              <a href={this.props.groupLink}>{window.location.hostname + this.props.groupLink}</a>
             </div>
-            <Link to={this.props.groupLink}><Button variant="primary">Open List</Button></Link>
+            <Button variant="primary" as={Link} to={this.props.groupLink}>Open List</Button>
           </div>
       </Col>
     );
