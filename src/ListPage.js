@@ -42,10 +42,9 @@ class ListPage extends Component {
                 const data = doc.data();
                 return {link: '/group/' + doc.id, name: data.name, id: doc.id};
               });
-              this.setState({groups: groups});
+              this.setState({groups: groups, isLoading: false});
             })
-            .catch(handleDBError)
-            .finally(this.setState({isLoading: false}));
+            .catch(handleDBError);
         } else {
           dbRef.set({groups: []}).catch(handleDBError);
         }
