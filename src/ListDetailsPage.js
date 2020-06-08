@@ -7,6 +7,7 @@ import {moviesDBKey} from './Config';
 import {checkStatus} from './util';
 import _ from 'lodash';
 import 'whatwg-fetch'
+import ListSettingsModal from './ListSettingsModal';
 
 const MOVIESDB_API = `https://api.themoviedb.org/3/search/multi?api_key=${moviesDBKey}&query={query}&page=1&include_adult=false`;
 const MOVIESDB_IMG_PATH_PREFIX = 'https://image.tmdb.org/t/p/w780/';
@@ -17,7 +18,8 @@ class ListDetailsPage extends Component {
     this.state = {
       ideas: [],
       name: 'Loading... please wait',
-      dbgid: null
+      dbgid: null,
+      showListSettingsModal: false
     };
   }
 
@@ -108,15 +110,28 @@ class ListDetailsPage extends Component {
       .catch(this.props.handleRemove);
   }
 
+  showListSettingsModal = () => {
+    this.setState({
+      showListSettingsModal: true
+    });
+  }
+
+  hideListSettingsModal = () => {
+    this.setState({
+      showListSettingsModal: false
+    });
+  }
+
   render() {
     const upvotedIdeas = this.state.ideas.filter(idea => idea.upvotedBy.length >= this.state.requiredVotes);
     const otherIdeas = this.state.ideas.filter(idea => !upvotedIdeas.includes(idea));
     return (
       <>
-        <ListDetailsHeader name={this.state.name} />
+        <ListDetailsHeader name={this.state.name} isListAdmin={this.props.user && this.props.user.uid === this.state.adminUid} showSettingsModal={this.showListSettingsModal} />
         <NewIdeaForm user={this.props.user} handleAdd={this.addNewIdea} handleError={this.props.handleError} clearAlert={this.props.clearAlert} />
         <IdeaGroup user={this.props.user} title="Upvoted Ideas" ideas={upvotedIdeas} handleRemove={this.handleRemove} adminUID={this.state.adminUid} groupId={this.state.dbgid} />
         <IdeaGroup user={this.props.user} title="Other Ideas" ideas={otherIdeas} handleRemove={this.handleRemove} adminUID={this.state.adminUid} groupId={this.state.dbgid} />
+        <ListSettingsModal show={this.state.showListSettingsModal} handleClose={this.hideListSettingsModal} listName={this.state.name} requiredVotes={this.state.requiredVotes} groupId={this.state.dbgid} />
       </>
     );
   }

@@ -46,11 +46,11 @@ class AuthModal extends Component {
             <AlertBar alert={this.state.alert} />
             <Form.Group controlId="authEmail">
               <Form.Label>Email</Form.Label>
-              <Form.Control type="email" name="email" placeholder="email@example.com" value={this.state.email} onChange={this.handleChange} />
+              <Form.Control type="email" name="email" placeholder="email@example.com" value={this.state.email} onChange={this.handleChange} required />
             </Form.Group>
             <Form.Group>
               <Form.Label>Password</Form.Label>
-              <Form.Control type="password" name="password" value={this.state.password} onChange={this.handleChange} aria-describedby="authPasswordHelp" />
+              <Form.Control type="password" name="password" value={this.state.password} onChange={this.handleChange} aria-describedby="authPasswordHelp" required />
               <Form.Text id="authPasswordHelp">
                 Your password must be at least 6 characters long.
               </Form.Text>
