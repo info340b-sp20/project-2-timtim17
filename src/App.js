@@ -126,7 +126,7 @@ class App extends Component {
 
   render() {
     const renderListDetailsPage = routeParams => <ListDetailsPage {...routeParams} user={this.state.user} handleError={this.handleError} clearAlert={this.clearAlert} />;
-    const renderGroupsPage = routeParams => <ListPage {...routeParams} authReady={this.state.authReady} user={this.state.user} />;
+    const renderGroupsPage = routeParams => <ListPage {...routeParams} authReady={this.state.authReady} user={this.state.user} handleError={this.handleError} />;
     return (
       <Router>
         <Navbar user={this.state.user} handleSignOut={this.handleSignOut}
