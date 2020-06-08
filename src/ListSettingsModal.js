@@ -62,6 +62,7 @@ class ListSettingsModal extends Component {
             <Form.Group controlId="listSettingsVotes">
               <Form.Label>Required Upvotes</Form.Label>
               <Form.Control type="number" value={this.state.numVotes} onChange={this.handleChange} name="numVotes" min="0" required />
+              <Form.Text className="text-muted">The number of upvotes for an idea to be considered as one of the random choices.</Form.Text>
             </Form.Group>
           </Modal.Body>
           <Modal.Footer>

@@ -3,11 +3,12 @@ import firebase from 'firebase/app';
 import NewIdeaForm from './NewIdeaForm';
 import IdeaGroup from './IdeaGroup';
 import ListDetailsHeader from './ListDetailsHeader';
+import ListSettingsModal from './ListSettingsModal';
+import PickedModal from './PickedModal';
 import {moviesDBKey} from './Config';
 import {checkStatus} from './util';
 import _ from 'lodash';
 import 'whatwg-fetch'
-import ListSettingsModal from './ListSettingsModal';
 
 const MOVIESDB_API = `https://api.themoviedb.org/3/search/multi?api_key=${moviesDBKey}&query={query}&page=1&include_adult=false`;
 const MOVIESDB_IMG_PATH_PREFIX = 'https://image.tmdb.org/t/p/w780/';
@@ -19,7 +20,12 @@ class ListDetailsPage extends Component {
       ideas: [],
       name: 'Loading... please wait',
       dbgid: null,
-      showListSettingsModal: false
+      showListSettingsModal: false,
+      highlightCard: null,
+      isPicking: false,
+      showPicked: false,
+      showPickedModal: false,
+      pickedIdx: null
     };
   }
 
@@ -122,16 +128,51 @@ class ListDetailsPage extends Component {
     });
   }
 
+  pickRandom = () => {
+    let numLoops = 1 + Math.floor(Math.random() * 5);
+    let numStops = Math.floor(Math.random() * this.upvotedIdeas.length) + numLoops * this.upvotedIdeas.length;
+    const randWheelTick = idx => setTimeout(curIdx => {
+      this.setState({
+        highlightCard: curIdx % this.upvotedIdeas.length
+      });
+      if (curIdx === numStops) {
+        this.setState({
+          isPicking: false,
+          showPicked: true,
+          showPickedModal: true,
+          pickedIdx: numStops % this.upvotedIdeas.length
+        });
+      } else {
+        randWheelTick(idx + 1);
+      }
+    }, 100, idx);
+    this.setState({ isPicking: true });
+    randWheelTick(0);
+  }
+
+  hidePickedModal = () => {
+    this.setState({
+      showPickedModal: false,
+      highlightCard: null
+    });
+  }
+
   render() {
-    const upvotedIdeas = this.state.ideas.filter(idea => idea.upvotedBy.length >= this.state.requiredVotes);
-    const otherIdeas = this.state.ideas.filter(idea => !upvotedIdeas.includes(idea));
+    this.upvotedIdeas = this.state.ideas.filter(idea => idea.upvotedBy.length >= this.state.requiredVotes);
+    this.otherIdeas = this.state.ideas.filter(idea => !this.upvotedIdeas.includes(idea));
     return (
       <>
-        <ListDetailsHeader name={this.state.name} isListAdmin={this.props.user && this.props.user.uid === this.state.adminUid} showSettingsModal={this.showListSettingsModal} />
+        <ListDetailsHeader name={this.state.name} isListAdmin={this.props.user && this.props.user.uid === this.state.adminUid}
+          showSettingsModal={this.showListSettingsModal} canPickRandom={this.upvotedIdeas.length > 0 && !this.state.isPicking} handlePickRandom={this.pickRandom} />
         <NewIdeaForm user={this.props.user} handleAdd={this.addNewIdea} handleError={this.props.handleError} clearAlert={this.props.clearAlert} />
-        <IdeaGroup user={this.props.user} title="Upvoted Ideas" ideas={upvotedIdeas} handleRemove={this.handleRemove} adminUID={this.state.adminUid} groupId={this.state.dbgid} />
-        <IdeaGroup user={this.props.user} title="Other Ideas" ideas={otherIdeas} handleRemove={this.handleRemove} adminUID={this.state.adminUid} groupId={this.state.dbgid} />
-        <ListSettingsModal show={this.state.showListSettingsModal} handleClose={this.hideListSettingsModal} listName={this.state.name} requiredVotes={this.state.requiredVotes} groupId={this.state.dbgid} />
+        <IdeaGroup user={this.props.user} title="Upvoted Ideas" ideas={this.upvotedIdeas} handleRemove={this.handleRemove}
+          adminUID={this.state.adminUid} groupId={this.state.dbgid}
+          highlightIdx={this.state.highlightCard === null ? undefined : this.state.highlightCard} />
+        <IdeaGroup user={this.props.user} title="Other Ideas" ideas={this.otherIdeas} handleRemove={this.handleRemove}
+          adminUID={this.state.adminUid} groupId={this.state.dbgid} />
+        <ListSettingsModal show={this.state.showListSettingsModal} handleClose={this.hideListSettingsModal}
+          listName={this.state.name} requiredVotes={this.state.requiredVotes} groupId={this.state.dbgid} />
+        <PickedModal show={this.state.showPickedModal} pick={this.upvotedIdeas[this.state.pickedIdx]} handleHide={this.hidePickedModal} />
       </>
     );
   }

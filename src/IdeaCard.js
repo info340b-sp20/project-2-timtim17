@@ -15,7 +15,7 @@ class IdeaCard extends Component {
 
   render() {
     return (
-      <Card>
+      <Card className={this.props.className}>
         { this.props.idea.image && <Card.Img variant="top" src={this.props.idea.image} alt={'Art from ' + this.props.idea.title} /> }
         <Card.Body>
           <Card.Title>{this.props.idea.title}</Card.Title>
