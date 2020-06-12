@@ -37,25 +37,27 @@ class ListPage extends Component {
   }
 
   updateGroups() {
-    this.setState({isLoading: true});
-    const handleDBError = error => this.props.handleError(new Error('Error connecting to database: ' + error));
-    const dbRef = firebase.firestore().collection('users').doc(this.props.user.uid);
-    this.unsubscribeDB = dbRef.onSnapshot(doc => {
-      if (doc.exists) {
-        const promises = doc.data().groups.map(doc => doc.get());
-        Promise.all(promises)
-          .then(data => {
-            const groups = data.map(doc => {
-              const data = doc.data();
-              return {link: '/group/' + doc.id, name: data.name, id: doc.id};
-            });
-            this.setState({groups: groups, isLoading: false});
-          })
-          .catch(handleDBError);
-      } else {
-        dbRef.set({groups: []}).catch(handleDBError);
-      }
-    }, handleDBError);
+    if (this.props.user) {
+      this.setState({isLoading: true});
+      const handleDBError = error => this.props.handleError(new Error('Error connecting to database: ' + error));
+      const dbRef = firebase.firestore().collection('users').doc(this.props.user.uid);
+      this.unsubscribeDB = dbRef.onSnapshot(doc => {
+        if (doc.exists) {
+          const promises = doc.data().groups.map(doc => doc.get());
+          Promise.all(promises)
+            .then(data => {
+              const groups = data.map(doc => {
+                const data = doc.data();
+                return {link: '/group/' + doc.id, name: data.name, id: doc.id};
+              });
+              this.setState({groups: groups, isLoading: false});
+            })
+            .catch(handleDBError);
+        } else {
+          dbRef.set({groups: []}).catch(handleDBError);
+        }
+      }, handleDBError);
+    }
   }
 
   showCreateModal = () => {
