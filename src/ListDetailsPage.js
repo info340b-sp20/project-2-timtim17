@@ -25,7 +25,8 @@ class ListDetailsPage extends Component {
       isPicking: false,
       showPicked: false,
       showPickedModal: false,
-      pickedIdx: null
+      pickedIdx: null,
+      exists: false
     };
   }
 
@@ -42,7 +43,8 @@ class ListDetailsPage extends Component {
             requiredVotes: data.votes_required,
             name: data.name,
             adminUid: data.admin_uid,
-            dbgid: this.dbRef.id
+            dbgid: this.dbRef.id,
+            exists: true
           });
         }, this.handleDBError);
         // subscribe to idea updates
@@ -57,6 +59,7 @@ class ListDetailsPage extends Component {
           unsubscribeDoc();
         }
       } else {
+        this.setState({exists: false});
         this.props.handleError(new Error('Error connecting to database: Is this group id a valid group id?'));
       }
     }).catch(this.handleDBError);
@@ -78,7 +81,7 @@ class ListDetailsPage extends Component {
 
   addUserToGroup() {
     // add this group to this user
-    if (this.props.user) {
+    if (this.props.user && this.state.exists) {
       const userDBRef = this.db.collection('users').doc(this.props.user.uid);
       userDBRef.get().then(doc => {
         if (doc.exists && doc.data().groups) {
