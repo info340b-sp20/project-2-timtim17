@@ -188,3 +188,13 @@ a, .btn-link {
     text-align: center;
   }
 }
+
+#about-code {
+  text-align: center;
+  font-size: 2rem;
+  display: block;
+}
+
+footer div:first-of-type a {
+  text-decoration: none;
+}

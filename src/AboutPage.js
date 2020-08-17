@@ -3,6 +3,7 @@ import Container from 'react-bootstrap/Container'
 import Row from 'react-bootstrap/Row'
 import Col from 'react-bootstrap/Col'
 import { useMediaQuery } from 'react-responsive'
+import { SourceCodeLink } from './MetaLinks';
 
 const Desktop = ({ children }) => {
   const isDesktop = useMediaQuery({ minWidth: 993 })
@@ -34,6 +35,7 @@ class AboutPage extends Component {
       <h1 id = "aboutHeading">What is this all about?</h1>
       <DesktopRows content={text} cols={cols}/>
       <MobileRows content={text} cols={cols}/>
+      <SourceCodeLink message="Check out the code on GitHub!" id="about-code" className="mt-2" />
     </Container> 
     );
   }
