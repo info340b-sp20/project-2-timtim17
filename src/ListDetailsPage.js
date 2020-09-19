@@ -105,7 +105,7 @@ class ListDetailsPage extends Component {
       .then(response => response.json())
       .then(response => {
         const newDoc = {
-          title: _.startCase(ideaTitle),
+          title: ideaTitle,
           upvotedBy: [this.props.user.uid],
           createdBy: this.props.user.uid
         };
