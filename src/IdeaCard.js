@@ -20,7 +20,8 @@ class IdeaCard extends Component {
         <Card.Body>
           <Card.Title>{this.props.idea.title}</Card.Title>
           { this.props.user ? <>
-                                { this.props.idea.upvotedBy.includes(this.props.user.uid) ? <Card.Link>Upvoted! ({this.props.idea.upvotedBy.length})</Card.Link>
+                                {/* Card.Link is used for the alignment styles provided by bootstrap, even though it's just buttons and text */}
+                                { this.props.idea.upvotedBy.includes(this.props.user.uid) ? <Card.Link as={Card.Text} className="d-inline">Upvoted! ({this.props.idea.upvotedBy.length})</Card.Link>
                                                                                           : <Card.Link as={Button} variant="link" onClick={this.upvote}>Upvote ({this.props.idea.upvotedBy.length})</Card.Link> }
                                 { (this.props.idea.createdBy === this.props.user.uid || this.props.adminUID === this.props.user.uid) &&
                                   <Card.Link className="float-right" as={Button} variant="link" onClick={() => this.props.handleRemove(this.props.idea.id)}>
