@@ -9,7 +9,7 @@ class OurNavbar extends Component {
   render() {
     return (
       <Navbar bg="dark" variant="dark">
-        <Navbar.Brand as={Link} to="/">App thing</Navbar.Brand>
+        <Navbar.Brand as={Link} to="/">Group Movie List</Navbar.Brand>
         { !this.props.authReady && <Navbar.Text><FontAwesomeIcon icon={faSpinner} pulse /></Navbar.Text> }
         <Navbar.Toggle aria-controls="navbar-nav" />
         <Navbar.Collapse id="navbar-nav">
