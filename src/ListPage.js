@@ -102,7 +102,7 @@ class ColButton extends Component {
           <div className="d-flex justify-content-between align-items-center">
             <div>
               <p style={{fontSize: '30px', marginBottom: 0}}>{this.props.groupName}</p>
-              <a href={this.props.groupLink}>{window.location.hostname + this.props.groupLink}</a>
+              <Link to={this.props.groupLink}>{window.location.hostname + this.props.groupLink}</Link>
             </div>
             <Button variant="primary" as={Link} to={this.props.groupLink}>Open List</Button>
           </div>
