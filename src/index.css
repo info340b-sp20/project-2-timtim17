@@ -148,6 +148,24 @@ a, .btn-link {
   max-width: 45%;
 }
 
+.idea-card-enter {
+  transform: scale(0);
+}
+
+.idea-card-enter-active {
+  transform: scale(1.0);
+  transition: transform 100ms ease-in;
+}
+
+.idea-card-exit {
+  transform: scale(1.2);
+}
+
+.idea-card-exit-active {
+  transform: scale(0);
+  transition: transform 100ms ease-in;
+}
+
 #root {
   min-height: 100vh;
   display: flex;
