@@ -152,9 +152,12 @@ a, .btn-link {
   transform: scale(0);
 }
 
+.idea-card-enter-active, .idea-card-exit-active {
+  transition: transform 100ms ease-in;
+}
+
 .idea-card-enter-active {
   transform: scale(1.0);
-  transition: transform 100ms ease-in;
 }
 
 .idea-card-exit {
@@ -163,7 +166,6 @@ a, .btn-link {
 
 .idea-card-exit-active {
   transform: scale(0);
-  transition: transform 100ms ease-in;
 }
 
 #root {
