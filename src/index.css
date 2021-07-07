@@ -168,6 +168,28 @@ a, .btn-link {
   transform: scale(0);
 }
 
+.route-enter {
+  transform: translateX(-100vw);
+}
+
+.route-enter-active {
+  transform: translateX(0);
+  transition: transform 300ms 300ms ease-out;
+}
+
+.route-exit {
+  transform: translateX(0);
+}
+
+.route-exit-active {
+  transform: translateX(100vw);
+  transition: transform 300ms ease-out;
+}
+
+body {
+  overflow-x: hidden;
+}
+
 #root {
   min-height: 100vh;
   display: flex;
