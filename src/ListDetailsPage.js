@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import firebase from 'firebase/app';
+import {getFirestore, collection, doc, addDoc, getDoc, deleteDoc, onSnapshot} from 'firebase/firestore';
 import NewIdeaForm from './NewIdeaForm';
 import IdeaGroup from './IdeaGroup';
 import ListDetailsHeader from './ListDetailsHeader';
@@ -30,14 +30,14 @@ class ListDetailsPage extends Component {
     };
   }
 
-  componentDidMount() {
-    this.db = firebase.firestore();
-    this.dbRef = this.db.collection('groups').doc(this.props.match.params.groupid);
+  async componentDidMount() {
+    this.db = getFirestore();
+    this.dbRef = doc(this.db, 'groups', this.props.match.params.groupid);
     this.handleDBError = error => this.props.handleError(new Error('Error connecting to database: ' + error));
-    this.dbRef.get().then(doc => {
+    getDoc(this.dbRef).then(doc => {
       if (doc.exists) {
         // subscribe to group updates
-        const unsubscribeGroup = this.dbRef.onSnapshot(doc => {
+        const unsubscribeGroup = onSnapshot(this.dbRef, doc => {
           const data = doc.data();
           this.setState({
             requiredVotes: data.votes_required,
@@ -48,7 +48,7 @@ class ListDetailsPage extends Component {
           });
         }, this.handleDBError);
         // subscribe to idea updates
-        const unsubscribeDoc = this.dbRef.collection('ideas').onSnapshot(query => {
+        const unsubscribeDoc = onSnapshot(collection(this.dbRef, 'ideas'), query => {
           this.setState({
             ideas: query.docs.map(doc => ({...doc.data(), id: doc.id}))
           });
@@ -82,8 +82,8 @@ class ListDetailsPage extends Component {
   addUserToGroup() {
     // add this group to this user
     if (this.props.user && this.state.exists) {
-      const userDBRef = this.db.collection('users').doc(this.props.user.uid);
-      userDBRef.get().then(doc => {
+      const userDBRef = doc(this.db, 'users', this.props.user.uid);
+      getDoc(userDBRef).then(doc => {
         if (doc.exists && doc.data().groups) {
           const curGroups = doc.data().groups;
           if (!curGroups) {
@@ -112,12 +112,12 @@ class ListDetailsPage extends Component {
         if (response.results.length > 0 && response.results[0].backdrop_path) {
           newDoc.image = MOVIESDB_IMG_PATH_PREFIX + response.results[0].backdrop_path;
         }
-        this.dbRef.collection('ideas').doc().set(newDoc);
+        addDoc(collection(this.dbRef, 'ideas'), newDoc);
       });
   }
 
   handleRemove = id => {
-    this.dbRef.collection('ideas').doc(id).delete()
+    deleteDoc(doc(this.dbRef, 'ideas', id))
       .catch(this.props.handleRemove);
   }
 
