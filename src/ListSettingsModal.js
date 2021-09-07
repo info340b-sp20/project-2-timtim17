@@ -4,7 +4,7 @@ import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {faSpinner} from '@fortawesome/free-solid-svg-icons';
-import firebase from 'firebase/app';
+import {getFirestore, doc, setDoc} from 'firebase/firestore';
 import AlertBar from './AlertBar';
 
 class ListSettingsModal extends Component {
@@ -37,7 +37,7 @@ class ListSettingsModal extends Component {
     this.setState({
       showSpinner: true
     });
-    firebase.firestore().collection('groups').doc(this.props.groupId).set({
+    setDoc(doc(getFirestore(), 'groups', this.props.groupId), {
       name: this.state.name,
       votes_required: this.state.numVotes
     }, { merge: true })

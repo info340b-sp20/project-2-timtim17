@@ -5,7 +5,12 @@ import ListPage from './ListPage';
 import AboutPage from './AboutPage';
 import Navbar from './Navbar';
 import AuthModal from './AuthModal';
-import firebase from 'firebase/app';
+import {
+  getAuth,
+  onAuthStateChanged,
+  signInWithEmailAndPassword,
+  createUserWithEmailAndPassword
+} from 'firebase/auth';
 import AlertBar from './AlertBar';
 import ListDetailsPage from './ListDetailsPage';
 import Footer from './Footer';
@@ -24,7 +29,7 @@ class App extends Component {
   } 
 
   componentDidMount() {
-    this.authUnsubscribe = firebase.auth().onAuthStateChanged(user => {
+    this.authUnsubscribe = onAuthStateChanged(getAuth(), user => {
       if (user) {
         this.setState({
           user: user
@@ -52,16 +57,16 @@ class App extends Component {
    * @param {string} pass - Password for the new user
    */
   handleSignUp = (email, pass) => {
-    return firebase.auth().createUserWithEmailAndPassword(email, pass);
+    return createUserWithEmailAndPassword(getAuth(), email, pass);
   }
 
   handleSignIn = (email, pass) => {
-    return firebase.auth().signInWithEmailAndPassword(email, pass);
+    return signInWithEmailAndPassword(getAuth(), email, pass);
   }
 
   handleSignOut = () => {
     if (this.state.user) {
-      firebase.auth().signOut()
+      getAuth().signOut()
         .then(() => this.flashAlert({title: 'Logged out!', type: 'info'}))
         .catch(this.handleError);
     }

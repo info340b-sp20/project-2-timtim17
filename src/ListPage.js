@@ -3,7 +3,7 @@ import {Link, Redirect} from 'react-router-dom';
 import Button from 'react-bootstrap/Button';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
-import firebase from 'firebase/app';
+import {getFirestore, doc, onSnapshot, getDoc} from 'firebase/firestore';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {faSpinner, faPlus} from '@fortawesome/free-solid-svg-icons';
 import CreateModal from './CreateModal';
@@ -36,14 +36,14 @@ class ListPage extends Component {
     }
   }
 
-  updateGroups() {
+  async updateGroups() {
     if (this.props.user) {
       this.setState({isLoading: true});
       const handleDBError = error => this.props.handleError(new Error('Error connecting to database: ' + error));
-      const dbRef = firebase.firestore().collection('users').doc(this.props.user.uid);
-      this.unsubscribeDB = dbRef.onSnapshot(doc => {
+      const dbRef = doc(getFirestore(), 'users', this.props.user.uid);
+      this.unsubscribeDB = onSnapshot(dbRef, doc => {
         if (doc.exists) {
-          const promises = doc.data().groups.map(doc => doc.get());
+          const promises = doc.data().groups.map(getDoc);
           Promise.all(promises)
             .then(data => {
               const groups = data.map(doc => {

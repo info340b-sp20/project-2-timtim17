@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import firebase from 'firebase/app';
+import {getFirestore, doc} from 'firebase/firestore';
 import Card from 'react-bootstrap/Card';
 import Button from 'react-bootstrap/Button';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
@@ -7,7 +7,7 @@ import {faTrashAlt} from '@fortawesome/free-solid-svg-icons';
 
 class IdeaCard extends Component {
   upvote = () => {
-    firebase.firestore().collection('groups').doc(this.props.gid)
+    doc(getFirestore(), 'groups', this.props.gid)
       .collection('ideas').doc(this.props.idea.id).set({
         upvotedBy: [...this.props.idea.upvotedBy, this.props.user.uid]
       }, {merge: true});

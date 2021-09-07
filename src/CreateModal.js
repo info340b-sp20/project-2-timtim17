@@ -2,7 +2,7 @@ import React, {Component} from 'react';
 import Modal from 'react-bootstrap/Modal';
 import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
-import firebase from 'firebase/app';
+import {getFirestore, collection, doc, addDoc, getDoc, setDoc} from 'firebase/firestore';
 import AlertBar from './AlertBar';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {faSpinner} from '@fortawesome/free-solid-svg-icons';
@@ -43,30 +43,30 @@ class ModalContents extends Component {
     this.setState({
       showSpinner: true
     });
-    const db = firebase.firestore();
-    const docRef = db.collection('groups').doc();
+    const db = getFirestore();
     const handleDBError = err => this.setState({ alert: { type: 'danger', title: 'Error!', message: err.message } });
-    docRef.set({
+    addDoc(collection(db, 'groups'), {
       name: this.state.name,
       votes_required: this.state.numVotes,
       admin_uid: this.props.uid
     })
-      .then(() => {
-        const userDBRef = db.collection('users').doc(this.props.uid);
-        return userDBRef.get().then(doc => {
+      .then(docRef => {
+        const userDBRef = doc(db, 'users', this.props.uid);
+        return getDoc(userDBRef).then(doc => {
           if (doc.exists && doc.data().groups) {
             const curGroups = doc.data().groups;
             if (!curGroups) {
-              userDBRef.set({groups:[docRef]});
+              setDoc(userDBRef, {groups:[docRef]});
             } else if(!_.find(curGroups, group => group.id === docRef)) {
-              userDBRef.set({groups:[...curGroups, docRef]});
+              setDoc(userDBRef, {groups:[...curGroups, docRef]});
             }
           } else {
-            userDBRef.set({groups:[docRef]});
+            setDoc(userDBRef, {groups:[docRef]});
           }
+          return docRef;
         });
       })
-      .then(() => this.setState({groupCreated: true, groupId: docRef.id}))
+      .then(docRef => this.setState({groupCreated: true, groupId: docRef.id}))
       .catch(handleDBError)
       .finally(() => this.setState({ showSpinner: false }));
   }
