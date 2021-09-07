@@ -30,15 +30,17 @@ class ListDetailsPage extends Component {
     };
   }
 
-  async componentDidMount() {
+  componentDidMount() {
     this.db = getFirestore();
     this.dbRef = doc(this.db, 'groups', this.props.match.params.groupid);
     this.handleDBError = error => this.props.handleError(new Error('Error connecting to database: ' + error));
-    getDoc(this.dbRef).then(doc => {
-      if (doc.exists) {
+    // code smell: for whatever reason, when loading this page directly the getDoc promise does not
+    //             resolve, but it does when navigating from another page.
+    setImmediate(() => { getDoc(this.dbRef).then(theDoc => {
+      if (theDoc.exists) {
         // subscribe to group updates
-        const unsubscribeGroup = onSnapshot(this.dbRef, doc => {
-          const data = doc.data();
+        const unsubscribeGroup = onSnapshot(this.dbRef, groupDoc => {
+          const data = groupDoc.data();
           this.setState({
             requiredVotes: data.votes_required,
             name: data.name,
@@ -50,7 +52,7 @@ class ListDetailsPage extends Component {
         // subscribe to idea updates
         const unsubscribeDoc = onSnapshot(collection(this.dbRef, 'ideas'), query => {
           this.setState({
-            ideas: query.docs.map(doc => ({...doc.data(), id: doc.id}))
+            ideas: query.docs.map(ideaDoc => ({...ideaDoc.data(), id: ideaDoc.id}))
           });
         }, this.handleDBError);
         this.addUserToGroup();
@@ -62,7 +64,7 @@ class ListDetailsPage extends Component {
         this.setState({exists: false});
         this.props.handleError(new Error('Error connecting to database: Is this group id a valid group id?'));
       }
-    }).catch(this.handleDBError);
+    }).catch(this.handleDBError); });
   }
 
   componentDidUpdate(prevProps) {
