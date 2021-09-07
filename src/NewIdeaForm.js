@@ -46,7 +46,7 @@ class NewIdeaForm extends Component {
               </Col>
               <Col sm={2}>
                 <Button variant="primary" type="submit">Suggest!</Button>
-                { this.state.showSpinner && <FontAwesomeIcon icon={faSpinner} pulse size="lg" className="ml-3" /> }
+                { this.state.showSpinner && <FontAwesomeIcon icon={faSpinner} pulse size="lg" className="me-3" /> }
               </Col>
             </Form.Group>
           </Form> :

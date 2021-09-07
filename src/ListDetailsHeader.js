@@ -12,7 +12,7 @@ class ListDetailsHeader extends Component {
           <Button variant="info" disabled={!this.props.canPickRandom} onClick={this.props.handlePickRandom}><FontAwesomeIcon icon={faRandom} /> Pick an Idea!</Button>
           {
             this.props.isListAdmin &&
-            <Button variant="secondary" className="ml-1" onClick={this.props.showSettingsModal}><FontAwesomeIcon icon={faCogs} /> List Settings</Button>
+            <Button variant="secondary" className="ms-1" onClick={this.props.showSettingsModal}><FontAwesomeIcon icon={faCogs} /> List Settings</Button>
           }
         </div>
       </header>
