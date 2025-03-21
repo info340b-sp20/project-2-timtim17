@@ -14,6 +14,7 @@ import {
 import AlertBar from './AlertBar';
 import ListDetailsPage from './ListDetailsPage';
 import Footer from './Footer';
+import { CSSTransition } from 'react-transition-group';
 
 class App extends Component {
   constructor(props) {
@@ -130,20 +131,37 @@ class App extends Component {
   };
 
   render() {
-    const renderListDetailsPage = routeParams => <ListDetailsPage {...routeParams} user={this.state.user} handleError={this.handleError} clearAlert={this.clearAlert} />;
-    const renderGroupsPage = routeParams => <ListPage {...routeParams} authReady={this.state.authReady} user={this.state.user} handleError={this.handleError} />;
     return (
       <Router>
         <Navbar user={this.state.user} handleSignOut={this.handleSignOut}
           handleSignUp={this.showSignUpModal} handleSignIn={this.showSignInModal} authReady={this.state.authReady} />
         <AlertBar alert={this.state.alert} />
         <Container className="mt-3 mb-3">
-          <Switch>
-            <Route exact path="/" render={renderGroupsPage} />
-            <Route path="/about" component={AboutPage} />
-            <Route path="/group/:groupid" render={renderListDetailsPage} />
-            <Redirect to="/" />
-          </Switch>
+          <Route exact path="/">
+            {routeParams => (
+              <CSSTransition in={routeParams.match != null} timeout={{enter: 600, exit: 300}} classNames="route" unmountOnExit>
+                <div>
+                  <ListPage {...routeParams} authReady={this.state.authReady} user={this.state.user} handleError={this.handleError} />
+                </div>
+              </CSSTransition>
+            )}
+          </Route>
+          <Route path="/about">
+            {({ match }) => (
+              <CSSTransition in={match != null} timeout={{enter: 600, exit: 300}} classNames="route" unmountOnExit>
+                <AboutPage />
+              </CSSTransition>
+            )}
+          </Route>
+          <Route path="/group/:groupid">
+            {routeParams => (
+              <CSSTransition in={routeParams.match != null} timeout={{enter: 600, exit: 300}} classNames="route" unmountOnExit>
+                <div>
+                  <ListDetailsPage {...routeParams} user={this.state.user} handleError={this.handleError} clearAlert={this.clearAlert} />
+                </div>
+              </CSSTransition>
+            )}
+          </Route>
         </Container>
         <Footer />
         <AuthModal onSubmit={this.handleSignUp} show={this.state.showSignUpModal} onHide={this.hideSignUpModal} title="Sign up!" buttonText="Sign up" />
